@@ -51,6 +51,24 @@ object NativeHttpTest extends TestSuite {
         "Expires" -> "-1",
         "Cache-Control" -> "private, max-age=0",
         "Content-Type" -> "text/html; charset=ISO-8859-1"))
+
+      // Another real-world case which was crashing previously
+      assert(NativeHttp.parseHeaders(Some(
+        """HTTP/2 200
+          |date: Wed, 09 May 2018 14:09:50 GMT
+          |content-type: application/json
+          |set-cookie: AWSALB=dbiOeu4MSFCodSOlsfXK1VYNr2d38iWV9IOxwBv1MeMdZ9+Cx6/KH4T4W1VJ2VncWpWR2G6yNJGA3MeuDJWx2PSH6tZVSjQxSVRSnZrrrEXXzkMDlNT14gyZ8EgD; Expires=Wed, 16 May 2018 14:09:48 GMT; Path=/
+          |server: Artifactory/5.4.10
+          |x-artifactory-id: b861212bf606c9ab71ad3cdf0d051de300a1bdbe
+          |x-artifactory-node-id: MTdjMDFjMTQ0ZTU0MGMyMWMwNTkxZDAw
+          |docker-distribution-api-version: registry/2.0""".stripMargin.replaceAll("\n", "\r\n"))) == Map(
+        "date" -> "Wed, 09 May 2018 14:09:50 GMT",
+        "content-type" -> "application/json",
+        "set-cookie" -> "AWSALB=dbiOeu4MSFCodSOlsfXK1VYNr2d38iWV9IOxwBv1MeMdZ9+Cx6/KH4T4W1VJ2VncWpWR2G6yNJGA3MeuDJWx2PSH6tZVSjQxSVRSnZrrrEXXzkMDlNT14gyZ8EgD; Expires=Wed, 16 May 2018 14:09:48 GMT; Path=/",
+        "server" -> "Artifactory/5.4.10",
+        "x-artifactory-id" -> "b861212bf606c9ab71ad3cdf0d051de300a1bdbe",
+        "x-artifactory-node-id" -> "MTdjMDFjMTQ0ZTU0MGMyMWMwNTkxZDAw",
+        "docker-distribution-api-version" -> "registry/2.0"))
     }
 
     "Parse headers not following HTTP spec" - {
